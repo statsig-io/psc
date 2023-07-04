@@ -3,14 +3,23 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "dist/updateOrg.js",
   "scripts": {
+    "start": "tsc && node dist/updateOrg.js",
+    "lint": "eslint . --ext .ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  },
   "dependencies": {
     "@types/better-sqlite3": "^7.6.4",
-    "better-sqlite3": "^8.3.0"
+    "better-sqlite3": "^8.3.0",
+    "csv-parse": "^5.4.0",
+    "dotenv": "^16.3.1",
+    "mongodb": "5.6",
+    "papaparse": "^5.4.1"
   }
 }
