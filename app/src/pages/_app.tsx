@@ -38,7 +38,7 @@ function SessionWrapper({
         user={{
           userID: session?.user?.name ?? undefined,
         }}
-        sdkKey="client-cLmGbdwuz2b52FBmlbUXmQt0aFTjOgm7XQ8nLQusVUR"
+        sdkKey="client-lP8cs9ZR5CvCLqqZg5qSKqIKg1vWhZopB3jbUXs7fpH"
         options={{ api: "https://latest.api.statsig.com/v1" }}
       >
         <>{children}</>

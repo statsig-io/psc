@@ -1,5 +1,15 @@
 body {
-  font-size: .875rem;
+  font-size: .95rem;
+}
+
+.button, .button:hover {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  background-color: #194b7d;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .feather {

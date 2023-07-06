@@ -21,7 +21,8 @@ export default function Document() {
           integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
           crossOrigin="anonymous"
         ></script>
-        <link rel="stylesheet" href="/css/site.css" />
+        <link rel="stylesheet" href="/css/site.css"></link>
+        <link rel="icon" type="image/png" href="/img/psc-icon.png"></link>
       </Head>
       <body>
         <Main />

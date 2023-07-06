@@ -1,7 +1,7 @@
 
 import dotenv from 'dotenv';
 
-import { MongoClient } from 'mongodb';
+import { AnyBulkWriteOperation, MongoClient } from 'mongodb';
 import nullthrows from './nullthrows';
 
 dotenv.config({ path: '../.env' });
@@ -18,9 +18,59 @@ export default abstract class ReviewUtils {
       reviewee: { $in: aliases } 
     }).project({
       _id: 0,
-      revieweeAlias: 1,
-      reviewerAlias: 1,
+      reviewee: 1,
+      reviewer: 1,
     }).toArray();
+  }
+
+  public static async genSaveFeedbackRequests(
+    requests: Array<any>,
+    reports: Array<string>,
+  ) {
+    const existingRequests = 
+      await this.genFeedbackRequests(reports.map(r => r.alias));
+    console.dir(existingRequests);
+    const requestsToDelete = 
+      existingRequests.filter(r => !requests.find(
+        r2 => r2.reviewer === r.reviewer && r2.reviewee === r.reviewee
+      ));
+    console.dir(requestsToDelete);
+    const operations = Array<AnyBulkWriteOperation>();
+    requestsToDelete.forEach(r => {
+      operations.push({
+        deleteOne: {
+          filter: {
+            reviewPeriod: REVIEW_PERIOD,
+            reviewer: r.reviewer,
+            reviewee: r.reviewee,
+          },
+        },
+      });
+    });
+    console.log(operations);
+    requests.map(r => {
+      operations.push({
+        updateOne: {
+          filter: { 
+            reviewPeriod: REVIEW_PERIOD,
+            reviewer: r.reviewer,
+            reviewee: r.reviewee,
+          },
+          update: {
+            $setOnInsert: {
+              reviewPeriod: REVIEW_PERIOD,
+              reviewer: r.reviewer,
+              reviewee: r.reviewee,
+              requester: r.requester,
+              requestDate: new Date(),
+            },
+          },
+          upsert: true,
+        }
+      });
+    });
+    console.log(operations);
+    await reviewsColl.bulkWrite(operations);
   }
 }
 

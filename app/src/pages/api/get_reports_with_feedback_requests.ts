@@ -21,10 +21,11 @@ export default async function get_reports_with_feedback_requests(
       employeeName: report.employeeName,
       requests: requests.filter(
           r => r.reviewee === report.alias
-        ).map(r => r.requester),
+        ).map(r => r.reviewer),
     });
   }
 
+  console.log(reportsAndRequests);
   res.status(200).json({
     success: true,
     data: {
