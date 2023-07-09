@@ -90,6 +90,10 @@ export default abstract class ReviewUtils {
     return await reviewsColl.findOne(this.contentFilter(peer, alias));
   }
 
+  public static async genReportReview(alias: string, report: string) {
+    return await reviewsColl.findOne(this.contentFilter(report, alias));
+  }
+
   public static async genPeerReviewList(alias: string) {
     return await reviewsColl.find({
       reviewPeriod: REVIEW_PERIOD,
@@ -103,19 +107,7 @@ export default abstract class ReviewUtils {
     manager: string,
     contents: string,
   ) {
-    return await reviewsColl.updateOne(
-      this.contentFilter(manager, alias),
-      {
-        $set: {
-          ...this.contentFilter(manager, alias),
-          lastModified: new Date(),
-          contents: contents,
-        },
-      }, 
-      {
-        upsert: true,
-      },
-    );
+    return await this.genSaveReviewContents(manager, alias, contents);
   }
 
   public static async genSavePeerFeedback(
@@ -123,11 +115,27 @@ export default abstract class ReviewUtils {
     peer: string,
     contents: string,
   ) {
+    return await this.genSaveReviewContents(peer, alias, contents);
+  }
+
+  public static async genSaveReportReview(
+    alias: string,
+    report: string,
+    contents: string,
+  ) {
+    return await this.genSaveReviewContents(report, alias, contents);
+  }
+
+  private static async genSaveReviewContents(
+    reviewee: string,
+    reviewer: string,
+    contents: string,
+  ) {
     return await reviewsColl.updateOne(
-      this.contentFilter(peer, alias),
+      this.contentFilter(reviewee, reviewer),
       {
         $set: {
-          ...this.contentFilter(peer, alias),
+          ...this.contentFilter(reviewee, reviewer),
           lastModified: new Date(),
           contents: contents,
         },

@@ -15,25 +15,35 @@ import ReviewEditor from '@/client/lib/ReviewEditor';
 export default function SelfReviewPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastModified, setLastModified] = useState(new Date(0));
-  const [contents, setContents] = useState('');
+  const [lookBack, setLookBack] = useState('');
+  const [lookForward, setLookForward] = useState('');
   
   useEffect(() => {
     apicall('get_self_review').then((data) => {
-      console.log(data);
-      setContents(data.contents);
+      try {
+        const parsed = JSON.parse(data.contents);
+        setLookBack(parsed.lookBack);
+        setLookForward(parsed.lookForward);
+      } catch (e) {
+        console.log(e);
+      }
       setLastModified(new Date(data.lastModified));
     }).finally(() => {
       setIsLoading(false);
     });
   }, []);
 
-  const handleChange = (value: string) => {
-    setContents(value);
+  const handleLookBackChange = (value: string) => {
+    setLookBack(value);
+  };
+
+  const handleLookForwardChange = (value: string) => {
+    setLookForward(value);
   };
 
   const handleSave = () => {
-    console.log(contents);
     const tid = toast.loading('Saving self-review');
+    const contents = JSON.stringify({ lookBack, lookForward });
     apicall('set_self_review', { contents }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Self-review saved');
@@ -55,11 +65,23 @@ export default function SelfReviewPage() {
           <li>Keep it &lt;300 words</li>
         </ul>
       </div>
-      <div style={{ height: 400, position: 'relative', marginTop: 20 }}>
-        <ReviewEditor 
-          contents={contents}
-          onChange={handleChange}
-        />
+      <div className='mt-3'>
+        <h5>Share your impact last half, what went well, and what didn't</h5>
+        <div style={{ height: 400, position: 'relative' }}>
+          <ReviewEditor 
+            contents={lookBack}
+            onChange={handleLookBackChange}
+          />
+        </div>
+      </div>
+      <div className='mt-3'>
+        <h5>Share what you plan to work on this half</h5>
+        <div style={{ height: 260, position: 'relative' }}>
+          <ReviewEditor 
+            contents={lookForward}
+            onChange={handleLookForwardChange}
+          />
+        </div>
       </div>
       <div className='mt-3'>
         <Button onClick={() => handleSave()}>Save</Button>

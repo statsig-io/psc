@@ -34,7 +34,7 @@ function buildReportsList(reportsList: Array<any>) {
         <hr />
         <li className="nav-item nav-link">
           <BiGroup className="feather" />
-          Team Feedback
+          Team Reviews
         </li>
         <li className="nav-item nav-link">
           <ul className="nav flex-column">
@@ -42,7 +42,7 @@ function buildReportsList(reportsList: Array<any>) {
             reportsList.map((p: any) => {
               return (
                 <li className="nav-item">
-                  <a className="nav-link" href={`/peerfeedback?alias=${p.alias}`}>
+                  <a className="nav-link" href={`/reportreview?alias=${p.alias}`}>
                     <BiUser className="feather" />
                     {p.employeeName}
                   </a>

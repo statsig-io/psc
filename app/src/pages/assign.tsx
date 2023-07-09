@@ -59,7 +59,8 @@ export default function AssignPage() {
         reportsAndRequests.length > 0 ? (
           <div>
             As a manager with direct reports, you can assign feedback requests 
-            to your reports.
+            to your reports.  Pick between <b>3-5</b> peers to request 
+            feedback from.
           </div>
         ) : (
           <div>

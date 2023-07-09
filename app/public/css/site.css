@@ -6,6 +6,30 @@ body {
   font-size: .90rem;
 }
 
+h1, .h1 {
+  font-size: 2rem!important;
+}
+
+h2, .h2 {
+  font-size: 1.75rem!important;
+}
+
+h3, .h3 {
+  font-size: 1.5rem!important;
+}
+
+h4, .h4 {
+  font-size: 1.25rem!important;
+}
+
+h5, .h5 {
+  font-size: 1rem!important;
+}
+
+h6, .h6 {
+  font-size: .75rem!important;
+}
+
 .button, .button:hover {
   padding: 0.5rem 1rem;
   font-weight: 600;

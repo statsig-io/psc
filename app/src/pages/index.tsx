@@ -6,7 +6,10 @@ export default function Portal() {
   return (
     <LoggedInPage title='Statsig Performance Review'>
       <div>
-        Hello World
+        <h5>Sequence</h5>
+        <ol>
+          <li>Manager picks peer review requests.</li>
+        </ol>
       </div>
     </LoggedInPage>
   );
