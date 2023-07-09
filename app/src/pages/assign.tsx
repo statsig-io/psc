@@ -2,23 +2,23 @@ import Image from 'next/image'
 import { signIn } from 'next-auth/react';
 import LoggedInPage from '@/client/lib/LoggedInPage';
 import { useEffect, useState } from 'react';
-import apicall from '@/lib/apicall';
+import apicall from '@/client/lib/apicall';
 import ReviewRequests from '@/client/lib/ReviewRequests';
 import type { Suggestion } from '@/client/lib/ReviewRequests';
 import Section from '@/client/lib/Section';
 import Button from '@/client/lib/Button';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function AssignPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [reportsAndRequests, setReportsAndRequests] = 
     useState(Array<Record<string, any>>());
   const [suggestions, setSuggestions] = useState(Array<Suggestion>());
   const [requests, setRequests] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
-    apicall('get_reports_with_feedback_requests').then((data) => {
-      console.log(data);
+    apicall('get_feedback_requests').then((data) => {
       setReportsAndRequests(data.reportsAndRequests);
       setSuggestions(data.employees?.map((e: any) => { 
         return { 
@@ -31,6 +31,7 @@ export default function AssignPage() {
         requests[r.alias] = r.requests;
       });
       setRequests(requests);
+      setIsLoading(false);
     });
   }, []);
 
@@ -43,17 +44,17 @@ export default function AssignPage() {
   const handleSave = () => {
     console.log(requests);
     const tid = toast.loading('Saving feedback requests');
-    apicall('set_feedback_requests', requests).then((data) => {
-      toast.done(tid);
+    apicall('set_feedback_requests', { requests }).then((data) => {
       toast.success('Feedback requests saved');
     }).catch((err) => {
-      toast.done(tid);
       toast.error(`Error saving feedback requests: ${err.message}`);
+    }).finally(() => {
+      toast.done(tid);
     });
   };
 
   return (
-    <LoggedInPage title='Request Feedback'>
+    <LoggedInPage title='Request Feedback' isLoading={isLoading}>
       {
         reportsAndRequests.length > 0 ? (
           <div>
@@ -85,8 +86,6 @@ export default function AssignPage() {
       <Section>
         <Button onClick={() => handleSave()}>Save</Button>
       </Section>
-      <ToastContainer position='bottom-right' newestOnTop={true}
-        closeOnClick={true} pauseOnHover={true} />
     </LoggedInPage>
   );
 }

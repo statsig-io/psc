@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
-console.log(process.env.PSC_CONN_STRING);
 
 function nullthrows<T>(x: T | null | undefined): T {
   if (x) {

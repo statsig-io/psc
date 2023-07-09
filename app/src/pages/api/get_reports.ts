@@ -1,15 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import OrgUtils from "@/lib/OrgUtils";
-import genValidateSession from "@/lib/genValidateSession";
+import OrgUtils from "@/server/lib/OrgUtils";
+import { ApiHandler, apiExporter } from "@/server/lib/ApiHandler";
 
-export default async function get_reports(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const alias = await genValidateSession(req, res);
-  const reports = await OrgUtils.genReports(alias);
-  res.status(200).json({
-    success: true,
-    data: reports
-  });
+class GetReports extends ApiHandler {
+  public async handleApiCall(): Promise<any> {
+    const reports = await OrgUtils.genReports(this.alias);
+    return reports;
+  }
 }
+
+export default apiExporter(GetReports);

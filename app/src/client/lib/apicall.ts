@@ -15,7 +15,8 @@ export default async function apicall(
   const res = await fetch(url, options);
   const json = await res.json();
   if (json.error) {
-    throw new Error(json.error);
+    console.log(json.error);
+    throw json.error;
   }
 
   return json.data;

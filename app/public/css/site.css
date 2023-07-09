@@ -1,5 +1,9 @@
+html, body {
+  box-sizing: border-box;
+}
+
 body {
-  font-size: .95rem;
+  font-size: .90rem;
 }
 
 .button, .button:hover {
@@ -10,12 +14,28 @@ body {
   text-decoration: none;
   border-radius: 4px;
   cursor: pointer;
+  display: inline-block;
 }
 
 .feather {
   width: 20px;
   height: 20px;
   vertical-align: text-bottom;
+}
+
+.loader {
+  content: url('/img/loading.gif');
+  margin: auto;
+  text-align: center;
+  padding-top: 120px;
+}
+
+.quill {
+  height: calc(100% - 50px)!important;
+}
+
+.ql-container {
+  font-size: 1rem!important;
 }
 
 .sidebar {
@@ -38,9 +58,23 @@ body {
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 
+.sidebar hr {
+  border: 0;
+  border-bottom: solid 1px #eee;
+  width: 100%;
+}
+
+.sidebar .nav-item {
+  width: 100%;
+}
+
 .sidebar .nav-link {
   font-weight: 700;
   color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .sidebar .nav-link .feather {

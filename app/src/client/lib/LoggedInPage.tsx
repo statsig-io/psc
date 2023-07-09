@@ -4,12 +4,14 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import Sidebar from "./Sidebar";
+import { ToastContainer } from "react-toastify";
 
 type Props = {
   title: string;
   children: React.ReactNode | React.ReactNode[];
   rightAccessory?: React.ReactNode;
   titleBackLink?: React.ReactNode;
+  isLoading?: boolean;
 };
 
 export default function LoggedInPage(props: Props): JSX.Element {
@@ -49,12 +51,16 @@ export default function LoggedInPage(props: Props): JSX.Element {
               </h3>
               {props.rightAccessory}
             </div>
-            <div>{props.children}</div>
+            { props.isLoading ? (
+              <div className="loader"></div>
+            ) : (
+              <div className="mt-2">{props.children}</div>
+            )}
           </main>
-
         </div>
-        
       </div>
+      <ToastContainer position='bottom-right' newestOnTop={true}
+        closeOnClick={true} pauseOnHover={true} />
     </div>
   );
 }

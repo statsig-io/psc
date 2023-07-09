@@ -23,7 +23,6 @@ export default function ReviewRequests(props: Props): JSX.Element {
       changes
     });
     setRequests(changes);
-    console.log(changes);
   };
   useEffect(() => {
     setRequests(props.requests.map(r => (

@@ -1,38 +1,37 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import OrgUtils from "@/lib/OrgUtils";
-import genValidateSession from "@/lib/genValidateSession";
-import ReviewUtils from "@/lib/ReviewUtils";
+import OrgUtils from "@/server/lib/OrgUtils";
+import ReviewUtils from "@/server/lib/ReviewUtils";
+import { ApiHandler, apiExporter } from "@/server/lib/ApiHandler";
 
-export default async function set_feedback_requests(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const alias = await genValidateSession(req, res);
-  const reports = await OrgUtils.genReports(alias);
+class SetFeedbackRequests extends ApiHandler {
+  public async handleApiCall(
+    _req: NextApiRequest,
+    _res: NextApiResponse,
+    body?: any,
+  ): Promise<any> {
+    const reports = await OrgUtils.genReports(this.alias);
+    const { requests } = body;
 
-  const requests = req.body;
-  console.log(requests);
-
-  const safeRequests = [] as Array<any>;
-  reports.forEach(r => {
-    const reviewee = r.alias;
-    const reviewers = requests[reviewee] || [];
-    const uniqueReviewers = reviewers.filter(
-      (value: any, index: any, array: any) => array.indexOf(value) === index
-    );
-    uniqueReviewers.forEach((reviewer: any) => {
-      safeRequests.push({
-        reviewer,
-        reviewee,
-        requester: alias,
+    const safeRequests = [] as Array<any>;
+    reports.forEach(r => {
+      const reviewee = r.alias;
+      const reviewers = requests[reviewee] || [];
+      const uniqueReviewers = reviewers.filter(
+        (value: any, index: any, array: any) => array.indexOf(value) === index
+      );
+      uniqueReviewers.forEach((reviewer: any) => {
+        safeRequests.push({
+          reviewer,
+          reviewee,
+          requester: this.alias,
+        });
       });
     });
-  });
 
-  ReviewUtils.genSaveFeedbackRequests(safeRequests, reports);
+    await ReviewUtils.genSaveFeedbackRequests(safeRequests, reports);
 
-  res.status(200).json({
-    success: true,
-    data: {},
-  });
+    return {};
+  }
 }
+
+export default apiExporter(SetFeedbackRequests);
