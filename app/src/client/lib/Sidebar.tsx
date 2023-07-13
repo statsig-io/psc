@@ -36,7 +36,7 @@ function buildReportsList(reportsList: Array<any>) {
           <BiGroup className="feather" />
           Team Reviews
         </li>
-        <li className="nav-item nav-link">
+        <li className="nav-item pl-2">
           <ul className="nav flex-column">
           { 
             reportsList.map((p: any) => {
@@ -106,7 +106,7 @@ export default function Sidebar(props: Props): JSX.Element {
             <BiUserVoice className="feather" />
             Peer Feedback
           </li>
-          <li className="nav-item nav-link">
+          <li className="nav-item pl-2">
             {buildPeerList(peerRequests)}
           </li>
           {buildReportsList(allReports)}          
