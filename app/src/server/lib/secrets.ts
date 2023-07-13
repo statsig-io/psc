@@ -14,7 +14,7 @@ const Secrets = {
   NEXT_PUBLIC_AZURE_AD_CLIENT_SECRET: nullthrows(process.env.NEXT_PUBLIC_AZURE_AD_CLIENT_SECRET),
   NEXT_PUBLIC_AZURE_AD_TENANT_ID: nullthrows(process.env.NEXT_PUBLIC_AZURE_AD_TENANT_ID),
   NEXTAUTH_SECRET: nullthrows(process.env.NEXTAUTH_SECRET),
-  NEXTAUTH_URL: 'http://localhost:3010',
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'http://localhost:3010',
   PSC_CONN_STRING: nullthrows(process.env.PSC_CONN_STRING),
 };
 
