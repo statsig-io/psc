@@ -19,9 +19,18 @@ class GetReportReview extends ApiHandler {
     }
 
     const doc = await ReviewUtils.genReportReview(this.alias, reportAlias);    
+    const peerFeedbacks = await ReviewUtils.genAllPeerFeedbacks(reportAlias);
+    const aliasSet = new Set<string>();
+    peerFeedbacks.forEach((f) => {
+      aliasSet.add(f.reviewer);
+      aliasSet.add(f.reviewee);
+    });
+    const employeeNames = await OrgUtils.genEmployeeNames(Array.from(aliasSet));
     return {
       contents: doc?.contents,
       lastModified: doc?.lastModified,
+      peerFeedbacks,
+      employeeNames,
       report,
     };
   }

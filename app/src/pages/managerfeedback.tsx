@@ -11,12 +11,14 @@ export default function ManagerFeedbackPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastModified, setLastModified] = useState(new Date(0));
   const [manager, setManager] = useState({} as Record<string, any>);
-  const [contents, setContents] = useState('');
+  const [reviewText, setReviewText] = useState('');
   
   useEffect(() => {
     apicall('get_manager_feedback').then((data) => {
-      console.log(data);
-      setContents(data.contents);
+      try {
+        const contents = JSON.parse(data.contents);
+        setReviewText(contents.reviewText as string);
+      } catch (e) {}
       setLastModified(new Date(data.lastModified));
       setManager(data.manager);
     }).finally(() => {
@@ -25,12 +27,12 @@ export default function ManagerFeedbackPage() {
   }, []);
 
   const handleChange = (value: string) => {
-    setContents(value);
+    setReviewText(value);
   };
 
   const handleSave = () => {
-    console.log(contents);
     const tid = toast.loading('Saving manager feedback');
+    const contents = JSON.stringify({ reviewText });
     apicall('set_manager_feedback', { contents }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Manager feedback saved');
@@ -56,7 +58,7 @@ export default function ManagerFeedbackPage() {
       </div>
       <div style={{ height: 400, position: 'relative', marginTop: 20 }}>
         <ReviewEditor 
-          contents={contents}
+          contents={reviewText}
           onChange={handleChange}
         />
       </div>

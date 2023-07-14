@@ -94,6 +94,14 @@ export default abstract class ReviewUtils {
     return await reviewsColl.findOne(this.contentFilter(report, alias));
   }
 
+  public static async genAllPeerFeedbacks(alias: string) {
+    return await reviewsColl.find({
+      reviewPeriod: REVIEW_PERIOD,
+      type: REVIEW_CONTENT,
+      reviewee: alias,
+    }).toArray();
+  }
+
   public static async genPeerReviewList(alias: string) {
     return await reviewsColl.find({
       reviewPeriod: REVIEW_PERIOD,

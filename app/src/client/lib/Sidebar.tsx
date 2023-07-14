@@ -82,12 +82,6 @@ export default function Sidebar(props: Props): JSX.Element {
               Home
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link" href="/assign">
-              <BiAddToQueue className="feather" />
-              Assign
-            </a>
-          </li>
           <hr />
           <li className="nav-item">
             <a className="nav-link" href="/selfreview">

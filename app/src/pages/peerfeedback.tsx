@@ -16,14 +16,17 @@ export default function PeerFeedbackPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastModified, setLastModified] = useState(new Date(0));
   const [peer, setPeer] = useState({} as Record<string, any>);
-  const [contents, setContents] = useState('');
+  const [reviewText, setReviewText] = useState('');
 
   const peerAlias = new URL(window.location.href).searchParams.get('alias');
   
   useEffect(() => {
     apicall('get_peer_feedback', { peerAlias }).then((data) => {
       console.log(data);
-      setContents(data.contents);
+      try {
+        const contents = JSON.parse(data.contents);
+        setReviewText(contents.reviewText as string);
+      } catch (e) {}
       setLastModified(new Date(data.lastModified));
       setPeer(data.peer);
     }).finally(() => {
@@ -32,12 +35,12 @@ export default function PeerFeedbackPage() {
   }, []);
 
   const handleChange = (value: string) => {
-    setContents(value);
+    setReviewText(value);
   };
 
   const handleSave = () => {
-    console.log(contents);
     const tid = toast.loading('Saving peer feedback');
+    const contents = JSON.stringify({ reviewText });
     apicall('set_peer_feedback', { peerAlias, contents }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Peer feedback saved');
@@ -63,7 +66,7 @@ export default function PeerFeedbackPage() {
       </div>
       <div style={{ height: 400, position: 'relative', marginTop: 20 }}>
         <ReviewEditor 
-          contents={contents}
+          contents={reviewText}
           onChange={handleChange}
         />
       </div>
