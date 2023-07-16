@@ -1,9 +1,11 @@
 import React from "react";
+import { BiHomeAlt, BiCool, BiCoffee, BiUserVoice, BiUser, BiGroup } from "react-icons/bi";
 
 type Props = {
   contents: string;
   lastModified: Date;
   reviewerName: string;
+  isFeedbackForManager?: boolean;
 };
 
 export default function PeerFeedbackView(props: Props): JSX.Element {
@@ -15,9 +17,20 @@ export default function PeerFeedbackView(props: Props): JSX.Element {
   }
   return (
     <div className="mt-4">
-      <div>
-        Written by <b>{props.reviewerName}</b> at {props.lastModified.toLocaleString()}
-      </div>
+      <h6>
+        {props.isFeedbackForManager ? (
+            <span>
+              <BiCoffee className="feather" /> Manager
+            </span>
+          ) : (
+            <span>
+              <BiUserVoice className="feather" /> Peer
+            </span>
+          )
+        }
+        {' '}feedback written by <b>{props.reviewerName}</b>
+      </h6>
+      <small>Submitted: {props.lastModified.toLocaleString()}</small>
       <div
         className="mt-4 p-2" 
         style={{

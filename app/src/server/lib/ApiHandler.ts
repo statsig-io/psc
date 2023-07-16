@@ -37,7 +37,7 @@ export abstract class ApiHandler {
     } catch (e: any) {
       res.status(500).json({
         success: false,
-        error: e,
+        error: e.message,
       });
     }
   }

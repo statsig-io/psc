@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 
 import { AnyBulkWriteOperation, MongoClient } from 'mongodb';
 import nullthrows from './nullthrows';
+import Secrets from './secrets';
 
 dotenv.config({ path: '../.env' });
 
-const REVIEW_PERIOD = '2023Q3';
 const REVIEW_REQUEST = 'request';
 const REVIEW_CONTENT = 'content';
 const client = new MongoClient(nullthrows(process.env.PSC_CONN_STRING));
@@ -16,7 +16,7 @@ const reviewsColl = peopleDb.collection('reviews');
 export default abstract class ReviewUtils {
   public static async genFeedbackRequests(aliases: string[]) {
     return await reviewsColl.find({ 
-      reviewPeriod: REVIEW_PERIOD,
+      reviewPeriod: Secrets.REVIEW_PERIOD,
       type: REVIEW_REQUEST,
       reviewee: { $in: aliases } 
     }).project({
@@ -66,22 +66,6 @@ export default abstract class ReviewUtils {
     return await reviewsColl.findOne(this.contentFilter(alias, alias));
   }
 
-  public static async genSaveSelfReview(alias: string, contents: string) {
-    return await reviewsColl.updateOne(
-      this.contentFilter(alias, alias),
-      {
-        $set: {
-          ...this.contentFilter(alias, alias),
-          lastModified: new Date(),
-          contents: contents,
-        },
-      }, 
-      {
-        upsert: true,
-      },
-    );
-  }
-
   public static async genManagerFeedback(alias: string, manager: string) {    
     return await reviewsColl.findOne(this.contentFilter(manager, alias));
   }
@@ -94,58 +78,94 @@ export default abstract class ReviewUtils {
     return await reviewsColl.findOne(this.contentFilter(report, alias));
   }
 
-  public static async genAllPeerFeedbacks(alias: string) {
+  public static async genAllSubmittedPeerFeedbacks(alias: string) {
     return await reviewsColl.find({
-      reviewPeriod: REVIEW_PERIOD,
+      reviewPeriod: Secrets.REVIEW_PERIOD,
       type: REVIEW_CONTENT,
       reviewee: alias,
+      submitted: true,
     }).toArray();
   }
 
   public static async genPeerReviewList(alias: string) {
     return await reviewsColl.find({
-      reviewPeriod: REVIEW_PERIOD,
+      reviewPeriod: Secrets.REVIEW_PERIOD,
       type: REVIEW_REQUEST,
       reviewer: alias,
     }).toArray();
+  }
+
+  public static async genSaveSelfReview(
+    alias: string,
+    contents: string,
+    submit: boolean = false,
+  ) {
+    return await reviewsColl.updateOne(
+      this.contentFilter(alias, alias),
+      {
+        $set: {
+          ...this.contentFilter(alias, alias),
+          lastModified: new Date(),
+          contents: contents,
+          submitted: submit,
+        },
+      }, 
+      {
+        upsert: true,
+      },
+    );
   }
 
   public static async genSaveManagerFeedback(
     alias: string,
     manager: string,
     contents: string,
+    submit: boolean = false,
   ) {
-    return await this.genSaveReviewContents(manager, alias, contents);
+    return await this.genSaveReviewContents(
+      manager,
+      alias,
+      contents,
+      submit,
+      { isFeedbackForManager: true }
+    );
   }
 
   public static async genSavePeerFeedback(
     alias: string,
     peer: string,
     contents: string,
+    submit: boolean = false,
   ) {
-    return await this.genSaveReviewContents(peer, alias, contents);
+    return await this.genSaveReviewContents(peer, alias, contents, submit);
   }
 
   public static async genSaveReportReview(
     alias: string,
     report: string,
     contents: string,
+    submit: boolean = false,
   ) {
-    return await this.genSaveReviewContents(report, alias, contents);
+    return await this.genSaveReviewContents(report, alias, contents, submit);
   }
 
   private static async genSaveReviewContents(
     reviewee: string,
     reviewer: string,
     contents: string,
+    submit: boolean = false,
+    additionalFields: Record<string, any> = {},
   ) {
+    const filter = this.contentFilter(reviewee, reviewer);
     return await reviewsColl.updateOne(
-      this.contentFilter(reviewee, reviewer),
+      filter,
       {
         $set: {
-          ...this.contentFilter(reviewee, reviewer),
+          ...filter,
           lastModified: new Date(),
           contents: contents,
+          submitted: submit,
+          ...additionalFields,
         },
       }, 
       {
@@ -156,7 +176,7 @@ export default abstract class ReviewUtils {
 
   private static requestFilter(reviewee: string, reviewer: string) {
     return {
-      reviewPeriod: REVIEW_PERIOD,
+      reviewPeriod: Secrets.REVIEW_PERIOD,
       type: REVIEW_REQUEST,
       reviewer: reviewer,
       reviewee: reviewee,
@@ -165,36 +185,10 @@ export default abstract class ReviewUtils {
 
   private static contentFilter(reviewee: string, reviewer: string) {
     return {
-      reviewPeriod: REVIEW_PERIOD,
+      reviewPeriod: Secrets.REVIEW_PERIOD,
       type: REVIEW_CONTENT,
       reviewer: reviewer,
       reviewee: reviewee,
     };
   }
 }
-
-/*
-
-perf.db
-
-cycle_table
------------
-cycle_id is_active details
-
-
-requests_table
---------------
-cycle_id timestamp reviewer reviewee requester
-
-
-reviews_table
--------------
-review_id request_id timestamp is_shared details is_open
-
-
-id assoc metadata value
-
-cycle_id CYCLE_DETAILS is_active {...}
-
-
-*/

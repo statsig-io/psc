@@ -4,7 +4,7 @@ export default function Button(
   props: React.AnchorHTMLAttributes<HTMLAnchorElement>,
 ): JSX.Element {
   return (
-    <a className="button" {...props}>
+    <a {...props} className={props.className + ' button'}>
       {props.children}
     </a>
   );

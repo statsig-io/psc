@@ -6,6 +6,11 @@ body {
   font-size: .90rem;
 }
 
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 700;
+}
+
 h1, .h1 {
   font-size: 2rem!important;
 }
@@ -24,10 +29,12 @@ h4, .h4 {
 
 h5, .h5 {
   font-size: 1rem!important;
+  margin-bottom: 0;
 }
 
 h6, .h6 {
-  font-size: .75rem!important;
+  font-size: .85rem!important;
+  margin-bottom: 0;
 }
 
 .button, .button:hover {
@@ -39,6 +46,10 @@ h6, .h6 {
   border-radius: 4px;
   cursor: pointer;
   display: inline-block;
+}
+
+.button.green {
+  background-color: #00c29c;
 }
 
 .feather {
@@ -54,12 +65,20 @@ h6, .h6 {
   padding-top: 120px;
 }
 
+p:last-child {
+  margin-bottom: 0;
+}
+
 .quill {
   height: calc(100% - 50px)!important;
 }
 
 .ql-container {
   font-size: 1rem!important;
+}
+
+.readonly .ql-container {
+  background-color: #f8f8f8;
 }
 
 .sidebar {

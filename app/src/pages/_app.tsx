@@ -40,6 +40,7 @@ function SessionWrapper({
         }}
         sdkKey="client-lP8cs9ZR5CvCLqqZg5qSKqIKg1vWhZopB3jbUXs7fpH"
         options={{ api: "https://latest.api.statsig.com/v1" }}
+        waitForInitialization={true}
       >
         <>{children}</>
       </StatsigProvider>

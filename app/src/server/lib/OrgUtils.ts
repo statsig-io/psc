@@ -1,12 +1,8 @@
-
-import dotenv from 'dotenv';
-
 import { MongoClient } from 'mongodb';
 import nullthrows from './nullthrows';
+import Secrets from './secrets';
 
-dotenv.config({ path: '../.env' });
-
-const client = new MongoClient(nullthrows(process.env.PSC_CONN_STRING));
+const client = new MongoClient(nullthrows(Secrets.PSC_CONN_STRING));
 const peopleDb = client.db('people');
 const orgColl = peopleDb.collection('org');
 

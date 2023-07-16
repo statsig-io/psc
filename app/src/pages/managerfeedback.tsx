@@ -1,26 +1,27 @@
 import LoggedInPage from '@/client/lib/LoggedInPage';
 import { useEffect, useState } from 'react';
 import apicall from '@/client/lib/apicall';
-import Button from '@/client/lib/Button';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-quill/dist/quill.snow.css';
 import ReviewEditor from '@/client/lib/ReviewEditor';
+import SaveFeedbackButton from '@/client/lib/SaveFeedbackButton';
 
 export default function ManagerFeedbackPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastModified, setLastModified] = useState(new Date(0));
-  const [manager, setManager] = useState({} as Record<string, any>);
   const [reviewText, setReviewText] = useState('');
+  const [apiData, setApiData] = useState({} as Record<string, any>);
   
   useEffect(() => {
     apicall('get_manager_feedback').then((data) => {
+      console.log(data);
+      setApiData(data);
       try {
         const contents = JSON.parse(data.contents);
         setReviewText(contents.reviewText as string);
       } catch (e) {}
       setLastModified(new Date(data.lastModified));
-      setManager(data.manager);
     }).finally(() => {
       setIsLoading(false);
     });
@@ -30,16 +31,19 @@ export default function ManagerFeedbackPage() {
     setReviewText(value);
   };
 
-  const handleSave = () => {
+  const handleSave = (submit = false) => {
     const tid = toast.loading('Saving manager feedback');
     const contents = JSON.stringify({ reviewText });
-    apicall('set_manager_feedback', { contents }).then((data) => {
+    apicall('set_manager_feedback', { contents, submit }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Manager feedback saved');
     }).catch((err) => {
       toast.error(`Error saving manager feedback: ${err.message}`);
     }).finally(() => {
       toast.done(tid);
+      if (submit) {
+        window.location.reload();
+      }
     });
   };
 
@@ -54,22 +58,21 @@ export default function ManagerFeedbackPage() {
         </ul>
       </div>
       <div className='mt-4'>
-        You are reviewing: <b>{manager?.employeeName}</b>
+        You are reviewing: <b>{apiData?.manager?.employeeName}</b>
       </div>
       <div style={{ height: 400, position: 'relative', marginTop: 20 }}>
         <ReviewEditor 
           contents={reviewText}
           onChange={handleChange}
+          readonly={!apiData?.canEdit}
         />
       </div>
-      <div className='mt-3'>
-        <Button onClick={() => handleSave()}>Save</Button>
-      </div>
-      <div>
-        <small>Last Saved: {
-          lastModified.getTime() > 0 ? lastModified.toLocaleString() : 'Never'
-        }</small>
-      </div>
+      <SaveFeedbackButton
+        canSave={apiData?.canEdit}
+        handleSave={handleSave}
+        lastModified={lastModified} 
+        submitted={apiData?.submitted}
+      />
     </LoggedInPage>
   );
 }

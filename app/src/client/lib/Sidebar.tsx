@@ -1,5 +1,5 @@
-import React, { use, useEffect } from "react";
-import { BiHomeAlt, BiAddToQueue, BiCool, BiCoffee, BiUserVoice, BiUser, BiGroup } from "react-icons/bi";
+import React, { useEffect } from "react";
+import { BiHomeAlt, BiCool, BiCoffee, BiUserVoice, BiUser, BiGroup } from "react-icons/bi";
 import apicall from "./apicall";
 
 type Props = {};
@@ -13,7 +13,7 @@ function buildPeerList(peerRequests: Array<any>) {
       ): (
         peerRequests.map((p: any) => {
           return (
-            <li className="nav-item">
+            <li className="nav-item" key={`_peer_${p.alias}`}>
               <a className="nav-link" href={`/peerfeedback?alias=${p.alias}`}>
                 <BiUser className="feather" />
                 {p.employeeName}
@@ -34,14 +34,14 @@ function buildReportsList(reportsList: Array<any>) {
         <hr />
         <li className="nav-item nav-link">
           <BiGroup className="feather" />
-          Team Reviews
+          Your Reports
         </li>
         <li className="nav-item pl-2">
           <ul className="nav flex-column">
           { 
             reportsList.map((p: any) => {
               return (
-                <li className="nav-item">
+                <li className="nav-item" key={`_report_${p.alias}`}>
                   <a className="nav-link" href={`/reportreview?alias=${p.alias}`}>
                     <BiUser className="feather" />
                     {p.employeeName}
@@ -86,19 +86,19 @@ export default function Sidebar(props: Props): JSX.Element {
           <li className="nav-item">
             <a className="nav-link" href="/selfreview">
               <BiCool className="feather" />
-              Self Review
+              You
             </a>
           </li>
           <li className="nav-item">
             <a className="nav-link" href="/managerfeedback">
               <BiCoffee className="feather" />
-              Manager Feedback
+              Your Manager
             </a>
           </li>
           <hr />
           <li className="nav-item nav-link">
             <BiUserVoice className="feather" />
-            Peer Feedback
+            Peers
           </li>
           <li className="nav-item pl-2">
             {buildPeerList(peerRequests)}

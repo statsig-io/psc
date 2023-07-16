@@ -1,11 +1,6 @@
-import Image from 'next/image'
-import { signIn } from 'next-auth/react';
 import LoggedInPage from '@/client/lib/LoggedInPage';
 import { useEffect, useState } from 'react';
 import apicall from '@/client/lib/apicall';
-import ReviewRequests from '@/client/lib/ReviewRequests';
-import Section from '@/client/lib/Section';
-import Button from '@/client/lib/Button';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-quill/dist/quill.snow.css';
@@ -13,6 +8,10 @@ import ReviewEditor from '@/client/lib/ReviewEditor';
 import Select from "react-select";
 import Split from 'react-split';
 import PeerFeedbackView from '@/client/lib/PeerFeedbackView';
+import SaveFeedbackButton from '@/client/lib/SaveFeedbackButton';
+import formatDate from '@/client/lib/formatDate';
+import SelfReviewView from '@/client/lib/SelfReviewView';
+
 
 type Suggestion = {
   value: string;
@@ -31,40 +30,43 @@ const ratingOptions = [
 export default function ReportReviewPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastModified, setLastModified] = useState(new Date(0));
-  const [report, setReport] = useState({} as Record<string, any>);
   const [reviewText, setReviewText] = useState('');
+  const [calibrationNotes, setCalibrationNotes] = useState('');
   const [rating, setRating] = useState({} as Suggestion);
-  const [peerFeedbacks, setPeerFeedbacks] = useState([] as Array<Record<string, any>>);
-  const [employeeNames, setEmployeeNames] = useState([] as Array<Record<string, any>>);
+  const [apiData, setApiData] = useState({} as Record<string, any>);
 
   const reportAlias = new URL(window.location.href).searchParams.get('alias');
+  if (!reportAlias) {
+    window.location.href = '/';
+  }
   
   useEffect(() => {
     apicall('get_report_review', { reportAlias }).then((data) => {
       console.log(data);
+      setApiData(data);
       let obj = {} as Record<string, any>;
       try {
         obj = JSON.parse(data.contents);
+        setReviewText(obj.reviewText);
+        setRating(
+          ratingOptions.find((r) => r.value === obj.rating) ?? {} as Suggestion,
+        );
+        setCalibrationNotes(obj.calibrationNotes);
       } catch (e) {}
-      setReviewText(obj.reviewText);
-      setRating(ratingOptions.find((r) => r.value === obj.rating) ?? {} as Suggestion);
-      setPeerFeedbacks(data.peerFeedbacks);
-      setEmployeeNames(data.employeeNames);
-
+      
       setLastModified(new Date(data.lastModified));
-      setReport(data.report);
     }).finally(() => {
       setIsLoading(false);
     });
   }, []);
 
-  const handleChange = (value: string) => {
-    setReviewText(value);
-  };
-
   const handleSave = () => {
     const tid = toast.loading('Saving report review');
-    const contents = JSON.stringify({ reviewText, rating: rating.value });
+    const contents = JSON.stringify({ 
+      reviewText,
+      rating: rating.value,
+      calibrationNotes,
+    });
     apicall('set_report_review', { reportAlias, contents }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Report review saved');
@@ -96,40 +98,65 @@ export default function ReportReviewPage() {
       >
         <div>
           <h5>
-            You are sharing feedback for: <b>{report.employeeName}</b>
+            You are sharing feedback for: <b>{apiData.report?.employeeName}</b>
           </h5>
+          <small>Review due: {formatDate(apiData?.dueDate)}</small>
+          <h6 className='mt-4'>Calibration Notes (not shared)</h6>
+          <div style={{ height: 300, position: 'relative', marginTop: 8 }}>
+            <ReviewEditor 
+              contents={calibrationNotes}
+              onChange={(t) => setCalibrationNotes(t)}
+              readonly={!apiData?.canEdit}
+            />
+          </div>
+          <h6 className='mt-4'>Rating & Review (will be shared)</h6>
           <Select 
             options={ratingOptions}
             placeholder='Select a rating' 
-            className='mt-4'
+            className='mt-2'
             value={rating}
             onChange={(e) => { setRating(e as Suggestion); }}
+            isDisabled={!apiData?.canEdit}
           />
           <div style={{ height: 600, position: 'relative', marginTop: 20 }}>
             <ReviewEditor 
               contents={reviewText}
-              onChange={handleChange}
+              onChange={(t) => setReviewText(t)}
+              readonly={!apiData?.canEdit}
             />
           </div>
-          <div className='mt-3'>
-            <Button onClick={() => handleSave()}>Save</Button>
-          </div>
-          <div>
-            <small>Last Saved: {
-              lastModified.getTime() > 0 ? lastModified.toLocaleString() : 'Never'
-            }</small>
-          </div>
+          <SaveFeedbackButton
+            lastModified={lastModified}
+            handleSave={handleSave}
+            canSave={apiData?.canEdit}
+          />
         </div>
         <div>
-          <h5>Peer feedback for: <b>{report.employeeName}</b></h5>
+          <SelfReviewView
+            selfReview={
+              apiData?.peerFeedbacks?.find(
+                (f: any) => f.reviewer === f.reviewee
+              )
+            }
+            employeeName={apiData.report?.employeeName}
+          />
+          <hr />
+          <h5>Feedback for: <b>{apiData.report?.employeeName}</b></h5>
           { 
-            peerFeedbacks.map((f) => (
-              <PeerFeedbackView
-                contents={f.contents}
-                lastModified={new Date(f.lastModified)}
-                reviewerName={employeeNames.find(e => e.alias === f.reviewer)?.employeeName ?? f.reviewer}
-              />
-            ))
+            apiData?.peerFeedbacks?.
+              filter((f: any) => f.reviewer !== f.reviewee).
+              map((f: any) => (
+                <PeerFeedbackView
+                  contents={f.contents}
+                  lastModified={new Date(f.lastModified)}
+                  reviewerName={
+                    apiData?.employeeNames.find(
+                      (e: any) => e.alias === f.reviewer
+                    )?.employeeName ?? f.reviewer
+                  }
+                  isFeedbackForManager={f.isFeedbackForManager}
+                />
+              ))
           }
         </div>
       </Split>

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import ReviewUtils from "@/server/lib/ReviewUtils";
 import { ApiHandler, apiExporter } from "@/server/lib/ApiHandler";
+import PermissionsUtils from "@/server/lib/PermissionsUtils";
 
 class SetSelfReview extends ApiHandler {
   public async handleApiCall(
@@ -8,8 +9,10 @@ class SetSelfReview extends ApiHandler {
     _res: NextApiResponse,
     body?: any,
   ): Promise<any> {
-    const { contents } = body;
-    await ReviewUtils.genSaveSelfReview(this.alias, contents);
+    await PermissionsUtils.ensureCanSaveSelfReview(this.alias);
+    
+    const { contents, submit } = body;
+    await ReviewUtils.genSaveSelfReview(this.alias, contents, submit);
     const doc = await ReviewUtils.genSelfReview(this.alias);
     return {
       lastModified: doc?.lastModified,

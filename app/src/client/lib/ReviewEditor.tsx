@@ -6,6 +6,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 type Props = {
   contents: string;
+  readonly?: boolean;
   onChange: (value: string) => void;
 };
 
@@ -31,7 +32,9 @@ export default function ReviewEditor(props: Props): JSX.Element {
       onChange={props.onChange}
       modules={modules}
       formats={formats}
+      readOnly={props.readonly}
       theme='snow'
+      className={ props.readonly ? 'readonly' : 'normal' }
     />
   );
 }

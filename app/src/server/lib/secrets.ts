@@ -16,6 +16,8 @@ const Secrets = {
   NEXTAUTH_SECRET: nullthrows(process.env.NEXTAUTH_SECRET),
   NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'http://localhost:3010',
   PSC_CONN_STRING: nullthrows(process.env.PSC_CONN_STRING),
+  STATSIG_SERVER_KEY: nullthrows(process.env.STATSIG_SERVER_KEY),
+  REVIEW_PERIOD: nullthrows(process.env.REVIEW_PERIOD),
 };
 
 process.env.NEXTAUTH_URL = Secrets.NEXTAUTH_URL;
