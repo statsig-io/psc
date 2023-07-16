@@ -6,13 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-quill/dist/quill.snow.css';
 import ReviewEditor from '@/client/lib/ReviewEditor';
 import SaveFeedbackButton from '@/client/lib/SaveFeedbackButton';
+import { dirtyNavigation, usePreventDirtyNav } from '@/client/lib/usePreventDirtyNav';
 
 export default function ManagerFeedbackPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastModified, setLastModified] = useState(new Date(0));
   const [reviewText, setReviewText] = useState('');
   const [apiData, setApiData] = useState({} as Record<string, any>);
-  
+
+  usePreventDirtyNav();
   useEffect(() => {
     apicall('get_manager_feedback').then((data) => {
       console.log(data);
@@ -29,6 +31,7 @@ export default function ManagerFeedbackPage() {
 
   const handleChange = (value: string) => {
     setReviewText(value);
+    dirtyNavigation(true);
   };
 
   const handleSave = (submit = false) => {
@@ -36,6 +39,7 @@ export default function ManagerFeedbackPage() {
     const contents = JSON.stringify({ reviewText });
     apicall('set_manager_feedback', { contents, submit }).then((data) => {
       setLastModified(new Date(data.lastModified));
+      dirtyNavigation(false);
       toast.success('Manager feedback saved');
     }).catch((err) => {
       toast.error(`Error saving manager feedback: ${err.message}`);

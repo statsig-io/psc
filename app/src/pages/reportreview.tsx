@@ -11,7 +11,7 @@ import PeerFeedbackView from '@/client/lib/PeerFeedbackView';
 import SaveFeedbackButton from '@/client/lib/SaveFeedbackButton';
 import formatDate from '@/client/lib/formatDate';
 import SelfReviewView from '@/client/lib/SelfReviewView';
-
+import { dirtyNavigation, usePreventDirtyNav } from '@/client/lib/usePreventDirtyNav';
 
 type Suggestion = {
   value: string;
@@ -35,6 +35,7 @@ export default function ReportReviewPage() {
   const [rating, setRating] = useState({} as Suggestion);
   const [apiData, setApiData] = useState({} as Record<string, any>);
 
+  usePreventDirtyNav();
   const reportAlias = new URL(window.location.href).searchParams.get('alias');
   if (!reportAlias) {
     window.location.href = '/';
@@ -70,6 +71,7 @@ export default function ReportReviewPage() {
     apicall('set_report_review', { reportAlias, contents }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Report review saved');
+      dirtyNavigation(false);
     }).catch((err) => {
       toast.error(`Error saving report review: ${err.message}`);
     }).finally(() => {
@@ -105,7 +107,10 @@ export default function ReportReviewPage() {
           <div style={{ height: 300, position: 'relative', marginTop: 8 }}>
             <ReviewEditor 
               contents={calibrationNotes}
-              onChange={(t) => setCalibrationNotes(t)}
+              onChange={(t) => {
+                setCalibrationNotes(t);
+                dirtyNavigation(true);
+              }}
               readonly={!apiData?.canEdit}
             />
           </div>
@@ -121,7 +126,10 @@ export default function ReportReviewPage() {
           <div style={{ height: 600, position: 'relative', marginTop: 20 }}>
             <ReviewEditor 
               contents={reviewText}
-              onChange={(t) => setReviewText(t)}
+              onChange={(t) => {
+                setReviewText(t);
+                dirtyNavigation(true);
+              }}
               readonly={!apiData?.canEdit}
             />
           </div>

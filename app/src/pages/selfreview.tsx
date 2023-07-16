@@ -7,6 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import ReviewEditor from '@/client/lib/ReviewEditor';
 import SaveFeedbackButton from '@/client/lib/SaveFeedbackButton';
 import formatDate from '@/client/lib/formatDate';
+import { dirtyNavigation, usePreventDirtyNav } from '@/client/lib/usePreventDirtyNav';
 
 export default function SelfReviewPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +16,7 @@ export default function SelfReviewPage() {
   const [lookForward, setLookForward] = useState('');
   const [apiData, setApiData] = useState({} as Record<string, any>);
   
+  usePreventDirtyNav();
   useEffect(() => {
     apicall('get_self_review').then((data) => {
       setApiData(data);
@@ -33,10 +35,12 @@ export default function SelfReviewPage() {
 
   const handleLookBackChange = (value: string) => {
     setLookBack(value);
+    dirtyNavigation(true);
   };
 
   const handleLookForwardChange = (value: string) => {
     setLookForward(value);
+    dirtyNavigation(true);
   };
 
   const handleSave = (submit = false) => {
@@ -45,6 +49,7 @@ export default function SelfReviewPage() {
     apicall('set_self_review', { contents, submit }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Self-review saved');
+      dirtyNavigation(true);
     }).catch((err) => {
       toast.error(`Error saving self-review: ${err.message}`);
     }).finally(() => {
