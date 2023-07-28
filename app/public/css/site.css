@@ -58,6 +58,12 @@ h6, .h6 {
   vertical-align: text-bottom;
 }
 
+label {
+  margin: 0;
+  font-size: .85rem!important;
+  font-weight: 600;
+}
+
 .loader {
   content: url('/img/loading.gif');
   margin: auto;

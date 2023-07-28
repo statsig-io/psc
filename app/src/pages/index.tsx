@@ -63,40 +63,42 @@ export default function Portal() {
   
   return (
     <LoggedInPage title='Statsig Performance Review' isLoading={isLoading}>
-      <div>
-        <h5>Sequence</h5>
-        <ol>
-          <li>If you're a manager, request peer feedback for your reports</li>
-          <li>Fill out self-review</li>
-          <li>Fill out manager feedback</li>
-          <li>Fill out peer feedback if you have any requested from you</li>
-        </ol>
-      </div>
-      <hr />
-      <div>
-        <h5>Important Dates</h5>
-        <ol>
-          <li>
-            Review start: <b>{
-              new Date(reviewConfig.get('review_start', '0')).toDateString()
-            }</b>
-          </li>
-          <li>
-            Self, Manager & Peer feedback due: <b>{
-              new Date(reviewConfig.get('feedback_due', '0')).toDateString()
-            }</b>
-          </li>
-          <li>
-            Calibration: <b>{
-              new Date(reviewConfig.get('calibration', '0')).toDateString()
-            }</b>
-          </li>
-          <li>
-            Managers start delivering review: <b>{
-              new Date(reviewConfig.get('reviews_begin', '0')).toDateString()
-            }</b>
-          </li>
-        </ol>
+      <div className='border p-3 bg-light'>
+        <div>
+          <h4>Sequence</h4>
+          <ol>
+            <li>If you're a manager, request peer feedback for your reports</li>
+            <li>Fill out self-review</li>
+            <li>Fill out manager feedback</li>
+            <li>Fill out peer feedback if you have any requested from you</li>
+          </ol>
+        </div>
+        <hr />
+        <div>
+          <h4>Important Dates</h4>
+          <ol>
+            <li>
+              Review start: <b>{
+                new Date(reviewConfig.get('review_start', '0')).toDateString()
+              }</b>
+            </li>
+            <li>
+              Self, Manager & Peer feedback due: <b>{
+                new Date(reviewConfig.get('feedback_due', '0')).toDateString()
+              }</b>
+            </li>
+            <li>
+              Calibration: <b>{
+                new Date(reviewConfig.get('calibration', '0')).toDateString()
+              }</b>
+            </li>
+            <li>
+              Managers start delivering review: <b>{
+                new Date(reviewConfig.get('reviews_begin', '0')).toDateString()
+              }</b>
+            </li>
+          </ol>
+        </div>
       </div>
       {
         reportsAndRequests.length > 0 && (<>

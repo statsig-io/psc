@@ -33,6 +33,7 @@ export default function ReportReviewPage() {
   const [reviewText, setReviewText] = useState('');
   const [calibrationNotes, setCalibrationNotes] = useState('');
   const [rating, setRating] = useState({} as Suggestion);
+  const [flaggedForPromotion, setFlaggedForPromotion] = useState(false);
   const [apiData, setApiData] = useState({} as Record<string, any>);
 
   usePreventDirtyNav();
@@ -53,11 +54,15 @@ export default function ReportReviewPage() {
           ratingOptions.find((r) => r.value === obj.rating) ?? {} as Suggestion,
         );
         setCalibrationNotes(obj.calibrationNotes);
+        setFlaggedForPromotion(obj.flaggedForPromotion ?? false);
       } catch (e) {}
       
       setLastModified(new Date(data.lastModified));
     }).finally(() => {
       setIsLoading(false);
+      setTimeout(() => {
+        dirtyNavigation(false);
+      }, 200);
     });
   }, []);
 
@@ -67,6 +72,7 @@ export default function ReportReviewPage() {
       reviewText,
       rating: rating.value,
       calibrationNotes,
+      flaggedForPromotion,
     });
     apicall('set_report_review', { reportAlias, contents }).then((data) => {
       setLastModified(new Date(data.lastModified));
@@ -103,7 +109,24 @@ export default function ReportReviewPage() {
             You are sharing feedback for: <b>{apiData.report?.employeeName}</b>
           </h5>
           <small>Review due: {formatDate(apiData?.dueDate)}</small>
-          <h6 className='mt-4'>Calibration Notes (not shared)</h6>
+          <div className='mt-4'>
+            <h6 className='d-inline'>
+              Calibration Notes (not shared)
+            </h6>
+            <div className='d-inline ml-3'>
+              <label>
+                <input 
+                  type="checkbox" 
+                  className="align-middle" 
+                  checked={flaggedForPromotion}
+                  onChange={(e) => {
+                    setFlaggedForPromotion(e.target.checked);
+                    dirtyNavigation(true);
+                  }}
+                /> Flag for promotion
+              </label>
+            </div>
+          </div>
           <div style={{ height: 300, position: 'relative', marginTop: 8 }}>
             <ReviewEditor 
               contents={calibrationNotes}
@@ -115,14 +138,16 @@ export default function ReportReviewPage() {
             />
           </div>
           <h6 className='mt-4'>Rating & Review (will be shared)</h6>
-          <Select 
-            options={ratingOptions}
-            placeholder='Select a rating' 
-            className='mt-2'
-            value={rating}
-            onChange={(e) => { setRating(e as Suggestion); }}
-            isDisabled={!apiData?.canEdit}
-          />
+          <div>
+            <Select 
+              options={ratingOptions}
+              placeholder='Select a rating' 
+              className='mt-2'
+              value={rating}
+              onChange={(e) => { setRating(e as Suggestion); }}
+              isDisabled={!apiData?.canEdit}
+            />
+          </div>
           <div style={{ height: 600, position: 'relative', marginTop: 20 }}>
             <ReviewEditor 
               contents={reviewText}
