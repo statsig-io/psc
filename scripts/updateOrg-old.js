@@ -62,11 +62,8 @@ function importRow(rowData) {
   const alias = getAliasFromEmail(rowData[KEY_EMAIL]);
   const managerAlias = getAliasFromEmail(rowData[KEY_MANAGER_EMAIL]);
 
-  console.log(alias);
-  console.log(managerAlias);
   updateSelfRow(alias, rowData);
   updateManagerRow(alias, managerAlias);
-  // console.log(rowData);
 }
 
 function runScript() {

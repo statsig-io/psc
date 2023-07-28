@@ -19,7 +19,6 @@ export default function PeerFeedbackPage() {
   usePreventDirtyNav();
   useEffect(() => {
     apicall('get_peer_feedback', { peerAlias }).then((data) => {
-      console.log(data);
       setApiData(data);
       try {
         const contents = JSON.parse(data.contents);

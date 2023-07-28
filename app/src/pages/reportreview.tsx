@@ -44,7 +44,6 @@ export default function ReportReviewPage() {
   
   useEffect(() => {
     apicall('get_report_review', { reportAlias }).then((data) => {
-      console.log(data);
       setApiData(data);
       let obj = {} as Record<string, any>;
       try {

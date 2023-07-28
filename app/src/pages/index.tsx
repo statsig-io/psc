@@ -20,7 +20,6 @@ export default function Portal() {
 
   useEffect(() => {
     apicall('get_feedback_requests').then((data) => {
-      console.log(data);
       setReportsAndRequests(data.reportsAndRequests);
       setSuggestions(data.employees?.map((e: any) => { 
         return { 
@@ -49,7 +48,6 @@ export default function Portal() {
   };
 
   const handleSave = () => {
-    console.log(requests);
     const tid = toast.loading('Saving feedback requests');
     apicall('set_feedback_requests', { requests }).then((data) => {
       toast.success('Feedback requests saved');

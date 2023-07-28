@@ -64,11 +64,9 @@ export default function Sidebar(props: Props): JSX.Element {
   const [allReports, setAllReports] = React.useState([]);
   useEffect(() => {
     apicall('get_peer_requests').then((data) => {
-      console.log(data);
       setPeerRequests(data);
     });
     apicall('get_reports').then((data) => {
-      console.log(data);
       setAllReports(data);
     });
   }, []);

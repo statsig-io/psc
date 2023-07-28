@@ -17,7 +17,6 @@ export default function ManagerFeedbackPage() {
   usePreventDirtyNav();
   useEffect(() => {
     apicall('get_manager_feedback').then((data) => {
-      console.log(data);
       setApiData(data);
       try {
         const contents = JSON.parse(data.contents);
