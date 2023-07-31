@@ -57,6 +57,8 @@ export default function ReportReviewPage() {
       } catch (e) {}
       
       setLastModified(new Date(data.lastModified));
+    }).catch((err) => {
+      toast.error(`Error loading report review: ${err.message}`);
     }).finally(() => {
       setIsLoading(false);
       setTimeout(() => {
@@ -65,7 +67,7 @@ export default function ReportReviewPage() {
     });
   }, []);
 
-  const handleSave = () => {
+  const handleSave = (submit = false) => {
     const tid = toast.loading('Saving report review');
     const contents = JSON.stringify({ 
       reviewText,
@@ -73,7 +75,10 @@ export default function ReportReviewPage() {
       calibrationNotes,
       flaggedForPromotion,
     });
-    apicall('set_report_review', { reportAlias, contents }).then((data) => {
+    apicall(
+      'set_report_review',
+      { reportAlias, contents, submit },
+    ).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Report review saved');
       dirtyNavigation(false);
@@ -81,6 +86,9 @@ export default function ReportReviewPage() {
       toast.error(`Error saving report review: ${err.message}`);
     }).finally(() => {
       toast.done(tid);
+      if (submit) {
+        window.location.reload();
+      }
     });
   };
 

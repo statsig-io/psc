@@ -31,7 +31,9 @@ class GetReportReview extends ApiHandler {
       aliasSet.add(f.reviewee);
     });
     const employeeNames = await OrgUtils.genEmployeeNames(Array.from(aliasSet));
-    const canEdit = await PermissionsUtils.canUpdateReportReview();
+    const canEdit = !doc?.submitted && (
+      await PermissionsUtils.canUpdateReportReview()
+    );
     const dueDate = await PermissionsUtils.genReportReviewDueDate();
     return {
       contents: doc?.contents,
