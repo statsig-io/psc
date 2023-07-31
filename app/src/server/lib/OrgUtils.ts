@@ -39,7 +39,9 @@ export default abstract class OrgUtils {
   }
 
   public static async genAllEmployees() {
-    return await orgColl.find().project({
+    return await orgColl.find({
+      status: 'Active',
+    }).project({
       _id: 0,
       alias: 1,
       managerAlias: 1,
@@ -49,7 +51,10 @@ export default abstract class OrgUtils {
   }
 
   public static async genReports(manager: string) {
-    return await orgColl.find({ managerAlias: manager }).project({
+    return await orgColl.find({
+      managerAlias: manager,
+      status: 'Active',
+    }).project({
       _id: 0,
       alias: 1,
       managerAlias: 1,
@@ -57,29 +62,3 @@ export default abstract class OrgUtils {
     }).toArray();
   }
 }
-
-/*
-
-perf.db
-
-cycle_table
------------
-cycle_id is_active details
-
-
-requests_table
---------------
-cycle_id timestamp reviewer reviewee requester
-
-
-reviews_table
--------------
-review_id request_id timestamp is_shared details is_open
-
-
-id assoc metadata value
-
-cycle_id CYCLE_DETAILS is_active {...}
-
-
-*/

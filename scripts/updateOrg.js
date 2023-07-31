@@ -29,6 +29,7 @@ const keyMap = {
   'Work location address - State': 'workLocationState',
   'Employee start date': 'startDate',
   'alias': 'alias',
+  'Employment status': 'status',
 };
 
 function sanitizeObject(obj) {
@@ -45,7 +46,8 @@ function sanitizeObject(obj) {
 
 async function updateRow(rowData) {
   const sanitized = sanitizeObject(rowData);
-  await orgColl.insertOne(sanitized);
+  await orgColl.updateOne({ alias: sanitized.alias }, { $set: sanitized }, { upsert: true });
+  // await orgColl.insertOne(sanitized);
 }
 
 function importFile(csvFile) {
@@ -55,14 +57,6 @@ function importFile(csvFile) {
   parser.on('data', async (data) => {
     await importRow(data);
   });
-  // Papa.parse(stream, {
-  //   header: true,
-  //   step: async (results, parser) => {
-  //     parser.pause();
-  //     await importRow(results.data);
-  //     parser.resume();
-  //   }
-  // });
 }
 
 function getAliasFromEmail(email) {
