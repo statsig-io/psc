@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { authOptions } from '../../pages/api/auth/[...nextauth]'
+import { getAuthOptions } from '../../pages/api/auth/[...nextauth]'
 import { getServerSession } from "next-auth/next"
 
 export default async function genValidateSession(
@@ -10,6 +10,7 @@ export default async function genValidateSession(
     throw new Error("Invalid request method");
   }
 
+  const authOptions = getAuthOptions(req, res);
   const session = await getServerSession(req, res, authOptions)
   const email = session?.user?.email;
   if (
