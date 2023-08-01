@@ -3,6 +3,7 @@ import AzureADProvider from 'next-auth/providers/azure-ad';
 import secrets from '@/server/lib/secrets';
 
 export const authOptions = {
+  secret: secrets.NEXT_PUBLIC_AUTH_SECRET,
   providers: [
     AzureADProvider({
       clientId: secrets.NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
@@ -15,6 +16,9 @@ export const authOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    },
     async jwt({ token, user, account }) {
       if (account && user) {
         return {
