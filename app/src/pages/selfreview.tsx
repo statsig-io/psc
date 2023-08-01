@@ -69,6 +69,7 @@ export default function SelfReviewPage() {
           <li>Avoid superlatives</li>
           <li>Bulleted points are better than walls of text</li>
           <li>Keep it &lt;300 words</li>
+          <li><a href="https://www.notion.so/statsig/Levels-Expectations-056c521502344ba29d5fbcc9b35932d6">Refer to expectations for your level here</a></li>
         </ul>
       </div>
       <div className='mt-3'>
@@ -85,7 +86,7 @@ export default function SelfReviewPage() {
         </div>
       </div>
       <div className='mt-3'>
-        <h5>Share what you plan to work on this half</h5>
+        <h5>What are your key areas for growth next half</h5>
         <div className="mt-2" style={{ height: 260, position: 'relative' }}>
           <ReviewEditor 
             contents={lookForward}
