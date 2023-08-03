@@ -30,6 +30,9 @@ export default function SelfReviewPage() {
       setLastModified(new Date(data.lastModified));
     }).finally(() => {
       setIsLoading(false);
+      setTimeout(() => {
+        dirtyNavigation(false);
+      }, 200);
     });
   }, []);
 
@@ -49,7 +52,7 @@ export default function SelfReviewPage() {
     apicall('set_self_review', { contents, submit }).then((data) => {
       setLastModified(new Date(data.lastModified));
       toast.success('Self-review saved');
-      dirtyNavigation(true);
+      dirtyNavigation(false);
     }).catch((err) => {
       toast.error(`Error saving self-review: ${err.message}`);
     }).finally(() => {

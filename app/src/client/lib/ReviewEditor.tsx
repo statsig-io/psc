@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import React from "react";
+import { UnprivilegedEditor } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export default function ReviewEditor(props: Props): JSX.Element {
+  const [wordCount, setWordCount] = React.useState(0);
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, false] }],
@@ -27,15 +29,28 @@ export default function ReviewEditor(props: Props): JSX.Element {
     'indent',
     'link'
   ];
-  return (
+  const updateWordCount = (editor: UnprivilegedEditor) => {
+    const text = editor.getText();
+    setWordCount(text.trim().split(/\s+/).length);
+  };
+  const onChange = (value: string, delta: any, source: any, editor: UnprivilegedEditor) => {
+    updateWordCount(editor);
+    props.onChange(value);
+  };
+  const onBlur = (range: any, source: any, editor: UnprivilegedEditor) => {
+    updateWordCount(editor);
+  };
+  return (<>
     <ReactQuill 
       value={props.contents}
-      onChange={props.onChange}
+      onChange={onChange}
+      onBlur={onBlur}
       modules={modules}
       formats={formats}
       readOnly={props.readonly}
       theme='snow'
       className={ props.readonly ? 'readonly' : 'normal' }
     />
-  );
+    <small className='float-right mt-3 pr-2'>{wordCount} words</small>
+  </>);
 }
