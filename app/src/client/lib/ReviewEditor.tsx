@@ -24,6 +24,7 @@ export default function ReviewEditor(props: Props): JSX.Element {
     'header',
     'bold', 'italic', 'underline', 'blockquote',
     'list', 'bullet',
+    'indent',
     'link'
   ];
   return (

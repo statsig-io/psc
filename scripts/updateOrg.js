@@ -46,6 +46,13 @@ function sanitizeObject(obj) {
 
 async function updateRow(rowData) {
   const sanitized = sanitizeObject(rowData);
+  if (sanitized.status === 'Terminated') {
+    // Then only insert if the alias doesn't exist
+    const existing = await orgColl.findOne({ alias: sanitized.alias });
+    if (existing && existing.status != 'Terminated') {
+      return;
+    }
+  }
   await orgColl.updateOne({ alias: sanitized.alias }, { $set: sanitized }, { upsert: true });
   // await orgColl.insertOne(sanitized);
 }
