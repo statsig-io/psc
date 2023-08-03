@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import React from "react";
+import React, { useState } from "react";
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -11,6 +11,8 @@ type Props = {
 };
 
 export default function ReviewEditor(props: Props): JSX.Element {
+  const [wordCount, setWordCount] = useState<number>(0);
+
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, false] }],
@@ -27,15 +29,26 @@ export default function ReviewEditor(props: Props): JSX.Element {
     'indent',
     'link'
   ];
+
+  const handleEditorChange = (content: string) => {
+    const words = content.trim().split(/\s+/);
+    const nonEmptyWords = words.filter(word => word !== '');
+    setWordCount(nonEmptyWords.length);
+    props.onChange(content);
+  };
+
   return (
-    <ReactQuill 
-      value={props.contents}
-      onChange={props.onChange}
-      modules={modules}
-      formats={formats}
-      readOnly={props.readonly}
-      theme='snow'
-      className={ props.readonly ? 'readonly' : 'normal' }
-    />
+    <div>
+      <p>Word Count: {wordCount}</p>
+      <ReactQuill 
+        value={props.contents}
+        onChange={handleEditorChange}
+        modules={modules}
+        formats={formats}
+        readOnly={props.readonly}
+        theme='snow'
+        className={ props.readonly ? 'readonly' : 'normal' }
+      />
+    </div>
   );
 }
