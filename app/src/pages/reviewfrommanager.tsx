@@ -28,7 +28,7 @@ export default function ReviewFromManagerPage() {
         </h4>
       </div>
       <div className='mt-3'>
-        <div>
+        <div className='reviewContainer'>
           <div dangerouslySetInnerHTML={{ __html: apiData?.review }} />
         </div>
       </div>

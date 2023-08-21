@@ -32,7 +32,7 @@ export default function PeerFeedbackView(props: Props): JSX.Element {
       </h6>
       <small>Submitted: {props.lastModified.toLocaleString()}</small>
       <div
-        className="mt-4 p-2" 
+        className="mt-4 p-2 reviewContainer" 
         style={{
           borderLeft: "solid 10px #eee",
           backgroundColor: "#f8f8f8",

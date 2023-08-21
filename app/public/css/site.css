@@ -37,7 +37,7 @@ h6, .h6 {
   margin-bottom: 0;
 }
 
-p:has(br) {
+.reviewContainer p:has(br) {
   height: 0px;
   margin-bottom: 0;
 }

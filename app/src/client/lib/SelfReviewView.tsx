@@ -23,7 +23,7 @@ export default function SelfReviewView(props: Props): JSX.Element {
         </small>
         <h6 className="mt-4">Lookback</h6>
         <div
-          className="mt-2 p-2" 
+          className="mt-2 p-2 reviewContainer" 
           style={{
             borderLeft: "solid 10px #eee",
             backgroundColor: "#f8f8f8",
@@ -33,7 +33,7 @@ export default function SelfReviewView(props: Props): JSX.Element {
         </div>
         <h6 className="mt-4">Look forward</h6>
         <div
-          className="mt-2 p-2" 
+          className="mt-2 p-2 reviewContainer" 
           style={{
             borderLeft: "solid 10px #eee",
             backgroundColor: "#f8f8f8",
