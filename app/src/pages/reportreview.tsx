@@ -12,20 +12,12 @@ import SaveFeedbackButton from '@/client/lib/SaveFeedbackButton';
 import formatDate from '@/client/lib/formatDate';
 import SelfReviewView from '@/client/lib/SelfReviewView';
 import { dirtyNavigation, usePreventDirtyNav } from '@/client/lib/usePreventDirtyNav';
+import ratingOptions from '@/client/lib/ratingOptions';
 
 type Suggestion = {
   value: string;
   label: string;
 }
-const ratingOptions = [
-  { value: 'tnte', label: 'Too new to evaluate' },
-  { value: 'mn', label: 'Meets None' },
-  { value: 'ms', label: 'Meets Some' },
-  { value: 'mm', label: 'Meets Most' },
-  { value: 'ma', label: 'Meets All' },
-  { value: 'ee', label: 'Exceeds Expectations' },
-  { value: 'ge', label: 'Greatly Exceeds'},
-] as Array<Suggestion>;
 
 export default function ReportReviewPage() {
   const [isLoading, setIsLoading] = useState(true);

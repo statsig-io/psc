@@ -26,6 +26,16 @@ export default abstract class ReviewUtils {
     }).toArray();
   }
 
+  public static async genReviewFromManager(alias: string, manager: string) {
+    return await reviewsColl.findOne({
+      reviewPeriod: Secrets.REVIEW_PERIOD,
+      reviewee: alias,
+      reviewer: manager,
+      type: REVIEW_CONTENT,
+      submitted: true,
+    });
+  }
+
   public static async genSaveFeedbackRequests(
     requests: Array<any>,
     reports: Array<Record<string, any>>,

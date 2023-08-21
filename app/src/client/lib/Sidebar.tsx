@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BiHomeAlt, BiCool, BiCoffee, BiUserVoice, BiUser, BiGroup } from "react-icons/bi";
+import { BiHomeAlt, BiCool, BiCoffee, BiUserVoice, BiUser, BiGroup, BiStreetView } from "react-icons/bi";
 import apicall from "./apicall";
 
 type Props = {};
@@ -60,6 +60,7 @@ function buildReportsList(reportsList: Array<any>) {
 
 
 export default function Sidebar(props: Props): JSX.Element {
+  const [hasReviewFromManager, setHasReviewFromManager] = React.useState(false);
   const [peerRequests, setPeerRequests] = React.useState([]);
   const [allReports, setAllReports] = React.useState([]);
   useEffect(() => {
@@ -68,6 +69,9 @@ export default function Sidebar(props: Props): JSX.Element {
     });
     apicall('get_reports').then((data) => {
       setAllReports(data);
+    });
+    apicall('get_has_review_from_manager').then((data) => {
+      setHasReviewFromManager(data.hasReviewFromManager);
     });
   }, []);
   return (
@@ -87,6 +91,14 @@ export default function Sidebar(props: Props): JSX.Element {
               You
             </a>
           </li>
+          {hasReviewFromManager && (
+            <li className="nav-item">
+              <a className="nav-link text-info" href="/reviewfrommanager">
+                <BiStreetView className="feather" />
+                Review from Manager
+              </a>
+            </li>
+          )}
           <li className="nav-item">
             <a className="nav-link" href="/managerfeedback">
               <BiCoffee className="feather" />
