@@ -37,6 +37,11 @@ h6, .h6 {
   margin-bottom: 0;
 }
 
+p:has(br) {
+  height: 0px;
+  margin-bottom: 0;
+}
+
 .button, .button:hover {
   padding: 0.5rem 1rem;
   font-weight: 600;
